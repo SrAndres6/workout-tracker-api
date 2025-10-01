@@ -1,0 +1,178 @@
+**implementaciones GET, POST, PUT, DELETE** y los **filtros por role y búsqueda por nombre con query strings en GET /users**.
+
+
+# API REST básica para la gestión de usuarios con **Express.js**.
+# Permite crear, leer, actualizar, eliminar y filtrar usuarios en memoria.
+
+---
+
+## Endpoints
+
+### 1. **GET url del localhost/api/v1/users**
+
+# Obtiene todos los usuarios o permite filtrar por **id**, **name** o **role** usando query strings.
+
+#### Request
+
+```http
+GET /users
+GET /users?id=101
+GET /users?name=andres
+GET /users?role=user
+```
+
+#### Response (200 OK)
+
+```json
+[
+  {
+    "id": "101",
+    "name": "andres garcia",
+    "email": "andres@example.com",
+    "role": "user",
+    "createdAt": "2025-09-12T12:00:00Z"
+  }
+]
+```
+
+#### Códigos de estado
+
+* `200 OK` → Usuarios encontrados (array vacío si no hay coincidencias).
+* `400 Bad Request` → Parámetros inválidos (si se implementa validación extra).
+
+---
+
+### 2. **GET /users/:id**
+
+Obtiene un usuario específico por su ID.
+
+#### Request
+
+```http
+GET /users/101
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "id": "101",
+  "name": "andres garcia",
+  "email": "andres@example.com",
+  "role": "user",
+  "createdAt": "2025-09-12T12:00:00Z"
+}
+```
+
+#### Códigos de estado
+
+* `200 OK` → Usuario encontrado.
+* `404 Not Found` → Usuario no existe.
+
+---
+
+### 3. **POST /users**
+
+Crea un nuevo usuario.
+
+#### Request (Body JSON)
+
+```json
+{
+  "name": "Carlos Ruiz",
+  "email": "carlos@example.com",
+  "role": "admin"
+}
+```
+
+#### Response (201 Created)
+
+```json
+{
+  "id": "1759285254164",
+  "name": "Carlos Ruiz",
+  "email": "carlos@example.com",
+  "role": "admin",
+  "createdAt": "2025-10-01T02:20:54.164Z"
+}
+```
+
+#### Códigos de estado
+
+* `201 Created` → Usuario creado con éxito.
+* `400 Bad Request` → Faltan campos requeridos (`name` o `email`).
+
+---
+
+### 4. **PUT /users/:id**
+
+Actualiza un usuario existente.
+
+#### Request
+
+```http
+PUT /users/101
+```
+
+#### Body JSON
+
+```json
+{
+  "name": "Andres G.",
+  "email": "andres.g@example.com",
+  "role": "user"
+}
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "id": "101",
+  "name": "Andres G.",
+  "email": "andres.g@example.com",
+  "role": "user",
+  "createdAt": "2025-09-12T12:00:00Z"
+}
+```
+
+#### Códigos de estado
+
+* `200 OK` → Usuario actualizado.
+* `400 Bad Request` → Faltan campos requeridos (`name` o `email`).
+* `404 Not Found` → Usuario no encontrado.
+
+---
+
+### 5. **DELETE /users/:id**
+
+Elimina un usuario por ID.
+
+#### Request
+
+```http
+DELETE /users/101
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "deleted": "101"
+}
+```
+
+#### Códigos de estado
+
+* `200 OK` → Usuario eliminado con éxito.
+* `404 Not Found` → Usuario no encontrado.
+
+
+## Resumen de funcionalidades implementadas
+
+✔️ **GET** → Listar usuarios, buscar por ID, filtrar por **role** o **name**.
+✔️ **POST** → Crear usuario con `name`, `email`, `role`.
+✔️ **PUT** → Actualizar usuario existente por ID.
+✔️ **DELETE** → Eliminar usuario por ID.
+✔️ **Filtros GET** → Buscar con query strings `?id=`, `?name=`, `?role=`.
+
