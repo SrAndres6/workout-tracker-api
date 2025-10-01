@@ -9,14 +9,17 @@ let users = [
     email: "andres@example.com",
     role: "user",
     createdAt: "2025-09-12T12:00:00Z"
-  }
+  },
+  {
+        id: "1759285254164",
+        name: "JUAN",
+        email: "ANDRES@example.com",
+        role: "user",
+        createdAt: "2025-10-01T02:20:54.164Z"
+    }
 ];
 
-
-// GET /api/v1/users
-router.get('/', (req, res) => {
-    res.status(200).json(users);
-});
+//
 
 // GET /users/:id
 router.get('/:id', (req, res) => {
@@ -87,5 +90,34 @@ router.delete('/:id', (req, res) => {
   const deletedUser = users.splice(index, 1);           // 4
   res.status(200).json({ deleted: deletedUser[0].id }); // 5
 });
+
+// GET /users?ROLE
+// GET /users?id=1&name=Carlos&role=user
+router.get('/', (req, res) => {
+  const { id, name, role } = req.query; // se iplementa parametros para que se busque por id, name o rle
+  let result = users;                   // 2
+
+  // Filtrar por ID (exacto)
+  if (id) {                             // 3
+    result = result.filter(u => u.id === id);
+  }
+
+  // Filtrar por nombre (parcial, insensible a mayúsculas)
+  if (name) {                           // 4
+    result = result.filter(u =>
+      u.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  // Filtrar por rol (exacto, insensible a mayúsculas)
+  if (role) {                           // 5
+    result = result.filter(u =>
+      u.role.toLowerCase() === role.toLowerCase()
+    );
+  }
+
+  res.status(200).json(result);         // 6
+});
+
 
 module.exports = router;
