@@ -54,8 +54,46 @@ const getAllWorkoutPlans = (req, res) => {
   }
 };
 
+// POST /workout-plans - Crear nuevo WorkoutPlan
+const createWorkoutPlan = (req, res) => {
+  try {
+    const { name, description, userId, exercises } = req.body;
+    
+    if (!name || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nombre y userId son obligatorios'
+      });
+    }
+
+    const newWorkoutPlan = {
+      id: nextId,
+      name,
+      description: description || '',
+      userId,
+      exercises: exercises || [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    workoutPlans.push(newWorkoutPlan);
+    nextId++;
+
+    res.status(201).json({
+      success: true,
+      data: newWorkoutPlan,
+      message: 'WorkoutPlan creado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear WorkoutPlan'
+    });
+  }
+};
 
 module.exports = {
   getAllWorkoutPlans,
+  createWorkoutPlan
 
 };
