@@ -71,8 +71,51 @@ const getWorkoutExerciseById = (req, res) => {
   }
 };
 
+// POST /workout-exercises - Crear nuevo WorkoutExercise
+const createWorkoutExercise = (req, res) => {
+  try {
+    const { workoutPlanId, exerciseId, exercise_name, sets, reps, weight, rest_time, order, notes } = req.body;
+    
+    if (!workoutPlanId || !exerciseId || !exercise_name) {
+      return res.status(400).json({
+        success: false,
+        message: 'workoutPlanId, exerciseId y exercise_name son obligatorios'
+      });
+    }
+
+    const newWorkoutExercise = {
+      id: nextId,
+      workoutPlanId,
+      exerciseId,
+      exercise_name,
+      sets: sets || 3,
+      reps: reps || 10,
+      weight: weight || 0,
+      rest_time: rest_time || 60,
+      order: order || 1,
+      notes: notes || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    workoutExercises.push(newWorkoutExercise);
+    nextId++;
+
+    res.status(201).json({
+      success: true,
+      data: newWorkoutExercise,
+      message: 'WorkoutExercise creado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear WorkoutExercise'
+    });
+  }
+};
+
 // Actualizar exports
 module.exports = {
   getWorkoutExerciseById,
-  
+  createWorkoutExercise,
 };
