@@ -230,14 +230,13 @@ const getAllWorkoutSchedules = (req, res) => {
     });
   }
 };
-bash
+
 
 // Actualizar exports
 module.exports = {
-  getWorkoutPlanById,
+  getWorkoutScheduleById,
   createWorkoutSchedule,
   updateWorkoutSchedule,
   deleteWorkoutSchedule,
   getAllWorkoutSchedules
-  
 };
