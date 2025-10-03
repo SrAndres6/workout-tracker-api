@@ -182,11 +182,62 @@ const deleteWorkoutSchedule = (req, res) => {
   }
 };
 
+// GET /workout-schedules - Listar todos los WorkoutSchedules con filtros
+const getAllWorkoutSchedules = (req, res) => {
+  try {
+    const { userId, status, date, workoutPlanId } = req.query;
+    
+    let filteredWorkoutSchedules = [...workoutSchedules];
+
+    // Filtro por usuario
+    if (userId) {
+      filteredWorkoutSchedules = filteredWorkoutSchedules.filter(w => 
+        w.userId === parseInt(userId)
+      );
+    }
+
+    // Filtro por estado
+    if (status) {
+      filteredWorkoutSchedules = filteredWorkoutSchedules.filter(w => 
+        w.status.toLowerCase() === status.toLowerCase()
+      );
+    }
+
+    // Filtro por fecha
+    if (date) {
+      filteredWorkoutSchedules = filteredWorkoutSchedules.filter(w => 
+        w.scheduledDate === date
+      );
+    }
+
+    // Filtro por workoutPlanId
+    if (workoutPlanId) {
+      filteredWorkoutSchedules = filteredWorkoutSchedules.filter(w => 
+        w.workoutPlanId === parseInt(workoutPlanId)
+      );
+    }
+
+    res.json({
+      success: true,
+      data: filteredWorkoutSchedules,
+      count: filteredWorkoutSchedules.length,
+      filters: { userId, status, date, workoutPlanId }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener WorkoutSchedules'
+    });
+  }
+};
+bash
+
 // Actualizar exports
 module.exports = {
   getWorkoutPlanById,
   createWorkoutSchedule,
   updateWorkoutSchedule,
   deleteWorkoutSchedule,
+  getAllWorkoutSchedules
   
 };
