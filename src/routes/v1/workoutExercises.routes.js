@@ -163,9 +163,38 @@ const updateWorkoutExercise = (req, res) => {
   }
 };
 
+// DELETE /workout-exercises/:id - Eliminar WorkoutExercise
+const deleteWorkoutExercise = (req, res) => {
+  try {
+    const { id } = req.params;
+    const workoutExerciseIndex = workoutExercises.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutExerciseIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutExercise no encontrado'
+      });
+    }
+
+    const deletedWorkoutExercise = workoutExercises.splice(workoutExerciseIndex, 1)[0];
+
+    res.json({
+      success: true,
+      data: deletedWorkoutExercise,
+      message: 'WorkoutExercise eliminado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar WorkoutExercise'
+    });
+  }
+};
+
 // Actualizar exports
 module.exports = {
   getWorkoutExerciseById,
   createWorkoutExercise,
   updateWorkoutExercise,
+  deleteWorkoutExercise,
 };
