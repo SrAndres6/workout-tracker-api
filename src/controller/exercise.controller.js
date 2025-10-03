@@ -196,12 +196,40 @@ const putExercise = (req, res) => {
     }
 };
 
+// DELETE /exercises/:id - Eliminar ejercicio
+const deleteExercise = (req, res) => {
+  try {
+    const { id } = req.params;
+    const exerciseIndex = exercises.findIndex(ex => ex.id === parseInt(id));
+    
+    if (exerciseIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ejercicio no encontrado'
+      });
+    }
+
+    const deletedExercise = exercises.splice(exerciseIndex, 1)[0];
+
+    res.json({
+      success: true,
+      data: deletedExercise,
+      message: 'Ejercicio eliminado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar ejercicio'
+    });
+  }
+};
 
 // Actualizar module.exports
 module.exports = {
   getExerciseById,
 createExercise,
 putExercise,
+deleteExercise,
 
 
 };
