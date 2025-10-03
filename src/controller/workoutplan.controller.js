@@ -164,10 +164,55 @@ const deleteWorkoutPlan = (req, res) => {
   }
 };
 
+// GET /workout-plans - Listar todos los WorkoutPlans con filtros
+const getAllworkoutPlan = (req, res) => {
+  try {
+    const { userId, name, exercise } = req.query;
+    
+    let filteredWorkoutPlans = [...workoutPlans];
+
+    // Filtro por usuario
+    if (userId) {
+      filteredWorkoutPlans = filteredWorkoutPlans.filter(w => 
+        w.userId === parseInt(userId)
+      );
+    }
+
+    // Búsqueda por nombre del plan
+    if (name) {
+      filteredWorkoutPlans = filteredWorkoutPlans.filter(w => 
+        w.name.toLowerCase().includes(name.toLowerCase())
+      );
+    }
+
+    // Filtro por ejercicio incluido en el plan
+    if (exercise) {
+      filteredWorkoutPlans = filteredWorkoutPlans.filter(w => 
+        w.exercises.some(ex => 
+          ex.exercise_name.toLowerCase().includes(exercise.toLowerCase())
+        )
+      );
+    }
+
+    res.json({
+      success: true,
+      data: filteredWorkoutPlans,
+      count: filteredWorkoutPlans.length,
+      filters: { userId, name, exercise }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener WorkoutPlans'
+    });
+  }
+};
+
 module.exports = {
   getAllWorkoutPlans,
   createWorkoutPlan,
   updateWorkoutPlan,
   deleteWorkoutPlan,
+  getAllworkoutPlan
 
 };
