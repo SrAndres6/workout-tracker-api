@@ -98,9 +98,67 @@ const createWorkoutSchedule = (req, res) => {
 };
 
 
+// PUT /workout-schedules/:id - Actualizar WorkoutSchedule completo
+const updateWorkoutSchedule = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { workoutPlanId, userId, scheduledDate, scheduledTime, status, duration, notes } = req.body;
+    
+    const workoutScheduleIndex = workoutSchedules.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutScheduleIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutSchedule no encontrado'
+      });
+    }
+
+    if (!workoutPlanId || !userId || !scheduledDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'workoutPlanId, userId y scheduledDate son obligatorios'
+      });
+    }
+
+    // Validar status
+    const allowedStatuses = ['pendiente', 'completado', 'cancelado'];
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Status debe ser: ${allowedStatuses.join(', ')}`
+      });
+    }
+
+    workoutSchedules[workoutScheduleIndex] = {
+      ...workoutSchedules[workoutScheduleIndex],
+      workoutPlanId,
+      userId,
+      scheduledDate,
+      scheduledTime: scheduledTime || "09:00",
+      status: status || "pendiente",
+      duration: duration || 60,
+      notes: notes || '',
+      updatedAt: new Date()
+    };
+
+    res.json({
+      success: true,
+      data: workoutSchedules[workoutScheduleIndex],
+      message: 'WorkoutSchedule actualizado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar WorkoutSchedule'
+    });
+  }
+};
+
+
 // Actualizar exports
 module.exports = {
   getWorkoutPlanById,
   createWorkoutSchedule,
+  updateWorkoutSchedule,
   
 };
