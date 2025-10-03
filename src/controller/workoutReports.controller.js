@@ -136,10 +136,110 @@ const createWorkoutReport = (req, res) => {
   }
 };
 
+// PUT /workout-reports/:id - Actualizar WorkoutReport completo
+const updateWorkoutReport = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { 
+      workoutScheduleId, 
+      userId, 
+      workoutPlanId, 
+      completedDate, 
+      totalDuration, 
+      totalExercises, 
+      totalSets, 
+      averageWeight, 
+      performanceRating, 
+      notes, 
+      exercisesCompleted 
+    } = req.body;
+    
+    const workoutReportIndex = workoutReports.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutReportIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutReport no encontrado'
+      });
+    }
+
+    if (!workoutScheduleId || !userId || !workoutPlanId || !completedDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'workoutScheduleId, userId, workoutPlanId y completedDate son obligatorios'
+      });
+    }
+
+    // Validar rating
+    if (performanceRating && (performanceRating < 0 || performanceRating > 10)) {
+      return res.status(400).json({
+        success: false,
+        message: 'performanceRating debe estar entre 0 y 10'
+      });
+    }
+
+    workoutReports[workoutReportIndex] = {
+      ...workoutReports[workoutReportIndex],
+      workoutScheduleId,
+      userId,
+      workoutPlanId,
+      completedDate,
+      totalDuration: totalDuration || 0,
+      totalExercises: totalExercises || 0,
+      totalSets: totalSets || 0,
+      averageWeight: averageWeight || 0,
+      performanceRating: performanceRating || 0,
+      notes: notes || '',
+      exercisesCompleted: exercisesCompleted || [],
+      updatedAt: new Date()
+    };
+
+    res.json({
+      success: true,
+      data: workoutReports[workoutReportIndex],
+      message: 'WorkoutReport actualizado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar WorkoutReport'
+    });
+  }
+};
+
+
+// DELETE /workout-reports/:id - Eliminar WorkoutReport
+const deleteWorkoutReport = (req, res) => {
+  try {
+    const { id } = req.params;
+    const workoutReportIndex = workoutReports.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutReportIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutReport no encontrado'
+      });
+    }
+
+    const deletedWorkoutReport = workoutReports.splice(workoutReportIndex, 1)[0];
+
+    res.json({
+      success: true,
+      data: deletedWorkoutReport,
+      message: 'WorkoutReport eliminado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar WorkoutReport'
+    });
+  }
+};
 
 // Actualizar exports
 module.exports = {
   getWorkoutReportById,
   createWorkoutReport,
-  
+updateWorkoutReport,
+deleteWorkoutReport,
 };
