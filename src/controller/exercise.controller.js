@@ -62,8 +62,97 @@ const getExerciseById = (req, res) => {
   }
 };
 
+// PUT /exercises/:id - Actualizar ejercicio completo
+const updateExercise = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, category, muscleGroup, difficulty, equipment } = req.body;
+    
+    const exerciseIndex = exercises.findIndex(ex => ex.id === parseInt(id));
+    
+    if (exerciseIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ejercicio no encontrado'
+      });
+    }
+
+    if (!name || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nombre y categoría son obligatorios'
+      });
+    }
+
+    exercises[exerciseIndex] = {
+      ...exercises[exerciseIndex],
+      name,
+      description: description || '',
+      category,
+      muscleGroup: muscleGroup || '',
+      difficulty: difficulty || 'Principiante',
+      equipment: equipment || '',
+      updatedAt: new Date()
+    };
+
+    res.json({
+      success: true,
+      data: exercises[exerciseIndex],
+      message: 'Ejercicio actualizado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar ejercicio'
+    });
+  }
+};
+
+
+// POST /exercises - Crear nuevo ejercicio
+const createExercise = (req, res) => {
+  try {
+    const { name, description, category, muscleGroup, difficulty, equipment } = req.body;
+    
+    if (!name || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nombre y categoría son obligatorios'
+      });
+    }
+
+    const newExercise = {
+      id: nextId,
+      name,
+      description: description || '',
+      category,
+      muscleGroup: muscleGroup || '',
+      difficulty: difficulty || 'Principiante',
+      equipment: equipment || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    exercises.push(newExercise);
+    nextId++;
+
+    res.status(201).json({
+      success: true,
+      data: newExercise,
+      message: 'Ejercicio creado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear ejercicio'
+    });
+  }
+};
+
 // Actualizar module.exports
 module.exports = {
   getExerciseById,
+createExercise,
+
 
 };
