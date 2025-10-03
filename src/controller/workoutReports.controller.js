@@ -236,10 +236,76 @@ const deleteWorkoutReport = (req, res) => {
   }
 };
 
+// GET /workout-reports - Listar todos los WorkoutReports con filtros
+const getAllWorkoutReports = (req, res) => {
+  try {
+    const { userId, workoutPlanId, dateFrom, dateTo, minRating } = req.query;
+    
+    let filteredWorkoutReports = [...workoutReports];
+
+    // Filtro por usuario
+    if (userId) {
+      filteredWorkoutReports = filteredWorkoutReports.filter(w => 
+        w.userId === parseInt(userId)
+      );
+    }
+
+    // Filtro por workoutPlanId
+    if (workoutPlanId) {
+      filteredWorkoutReports = filteredWorkoutReports.filter(w => 
+        w.workoutPlanId === parseInt(workoutPlanId)
+      );
+    }
+
+    // Filtro por rango de fechas
+    if (dateFrom) {
+      filteredWorkoutReports = filteredWorkoutReports.filter(w => 
+        w.completedDate >= dateFrom
+      );
+    }
+
+    if (dateTo) {
+      filteredWorkoutReports = filteredWorkoutReports.filter(w => 
+        w.completedDate <= dateTo
+      );
+    }
+
+    // Filtro por rating mínimo
+    if (minRating) {
+      filteredWorkoutReports = filteredWorkoutReports.filter(w => 
+        w.performanceRating >= parseFloat(minRating)
+      );
+    }
+
+    // Calcular estadísticas
+    const stats = {
+      totalReports: filteredWorkoutReports.length,
+      averageRating: filteredWorkoutReports.length > 0 ? 
+        filteredWorkoutReports.reduce((sum, report) => sum + report.performanceRating, 0) / filteredWorkoutReports.length : 0,
+      totalDuration: filteredWorkoutReports.reduce((sum, report) => sum + report.totalDuration, 0),
+      totalExercises: filteredWorkoutReports.reduce((sum, report) => sum + report.totalExercises, 0)
+    };
+
+    res.json({
+      success: true,
+      data: filteredWorkoutReports,
+      count: filteredWorkoutReports.length,
+      stats: stats,
+      filters: { userId, workoutPlanId, dateFrom, dateTo, minRating }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener WorkoutReports'
+    });
+  }
+};
+
 // Actualizar exports
 module.exports = {
   getWorkoutReportById,
   createWorkoutReport,
 updateWorkoutReport,
 deleteWorkoutReport,
+getAllWorkoutReports
 };
