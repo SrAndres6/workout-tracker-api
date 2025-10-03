@@ -92,8 +92,53 @@ const createWorkoutPlan = (req, res) => {
   }
 };
 
+// PUT /workout-plans/:id - Actualizar WorkoutPlan completo
+const updateWorkoutPlan = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, userId, exercises } = req.body;
+    
+    const workoutPlanIndex = workoutPlans.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutPlanIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutPlan no encontrado'
+      });
+    }
+
+    if (!name || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nombre y userId son obligatorios'
+      });
+    }
+
+    workoutPlans[workoutPlanIndex] = {
+      ...workoutPlans[workoutPlanIndex],
+      name,
+      description: description || '',
+      userId,
+      exercises: exercises || [],
+      updatedAt: new Date()
+    };
+
+    res.json({
+      success: true,
+      data: workoutPlans[workoutPlanIndex],
+      message: 'WorkoutPlan actualizado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar WorkoutPlan'
+    });
+  }
+};
+
 module.exports = {
   getAllWorkoutPlans,
-  createWorkoutPlan
+  createWorkoutPlan,
+  updateWorkoutPlan,
 
 };
