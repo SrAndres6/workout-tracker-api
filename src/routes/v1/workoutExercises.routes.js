@@ -114,8 +114,58 @@ const createWorkoutExercise = (req, res) => {
   }
 };
 
+// PUT /workout-exercises/:id - Actualizar WorkoutExercise completo
+const updateWorkoutExercise = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { workoutPlanId, exerciseId, exercise_name, sets, reps, weight, rest_time, order, notes } = req.body;
+    
+    const workoutExerciseIndex = workoutExercises.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutExerciseIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutExercise no encontrado'
+      });
+    }
+
+    if (!workoutPlanId || !exerciseId || !exercise_name) {
+      return res.status(400).json({
+        success: false,
+        message: 'workoutPlanId, exerciseId y exercise_name son obligatorios'
+      });
+    }
+
+    workoutExercises[workoutExerciseIndex] = {
+      ...workoutExercises[workoutExerciseIndex],
+      workoutPlanId,
+      exerciseId,
+      exercise_name,
+      sets: sets || 3,
+      reps: reps || 10,
+      weight: weight || 0,
+      rest_time: rest_time || 60,
+      order: order || 1,
+      notes: notes || '',
+      updatedAt: new Date()
+    };
+
+    res.json({
+      success: true,
+      data: workoutExercises[workoutExerciseIndex],
+      message: 'WorkoutExercise actualizado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar WorkoutExercise'
+    });
+  }
+};
+
 // Actualizar exports
 module.exports = {
   getWorkoutExerciseById,
   createWorkoutExercise,
+  updateWorkoutExercise,
 };
