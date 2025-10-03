@@ -149,10 +149,59 @@ const createExercise = (req, res) => {
   }
 };
 
+// PUT /exercises/:id - Actualizar ejercicio completo
+const putExercise = (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, category, muscleGroup, difficulty, equipment } = req.body;
+
+        const exerciseIndex = exercises.findIndex(ex => ex.id === parseInt(id));
+
+        if (exerciseIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ejercicio no encontrado'
+            });
+        }
+
+        // PUT: requiere todos los campos obligatorios
+        if (!name || !category) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nombre y categoría son obligatorios'
+            });
+        }
+
+        exercises[exerciseIndex] = {
+            ...exercises[exerciseIndex],
+            name,
+            description: description || '',
+            category,
+            muscleGroup: muscleGroup || '',
+            difficulty: difficulty || 'Principiante',
+            equipment: equipment || '',
+            updatedAt: new Date()
+        };
+
+        res.json({
+            success: true,
+            data: exercises[exerciseIndex],
+            message: 'Ejercicio actualizado exitosamente'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar ejercicio'
+        });
+    }
+};
+
+
 // Actualizar module.exports
 module.exports = {
   getExerciseById,
 createExercise,
+putExercise,
 
 
 };
