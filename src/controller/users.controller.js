@@ -1,6 +1,6 @@
 // src/controllers/users.controller.js
 
-// Simulación de datos en memoria
+// Simulación de datos en memoria con datos de usuarios
 let users = [
   {
     id: "101",
