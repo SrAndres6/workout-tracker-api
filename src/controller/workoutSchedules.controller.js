@@ -154,11 +154,39 @@ const updateWorkoutSchedule = (req, res) => {
   }
 };
 
+// DELETE /workout-schedules/:id - Eliminar WorkoutSchedule
+const deleteWorkoutSchedule = (req, res) => {
+  try {
+    const { id } = req.params;
+    const workoutScheduleIndex = workoutSchedules.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutScheduleIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutSchedule no encontrado'
+      });
+    }
+
+    const deletedWorkoutSchedule = workoutSchedules.splice(workoutScheduleIndex, 1)[0];
+
+    res.json({
+      success: true,
+      data: deletedWorkoutSchedule,
+      message: 'WorkoutSchedule eliminado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar WorkoutSchedule'
+    });
+  }
+};
 
 // Actualizar exports
 module.exports = {
   getWorkoutPlanById,
   createWorkoutSchedule,
   updateWorkoutSchedule,
+  deleteWorkoutSchedule,
   
 };
