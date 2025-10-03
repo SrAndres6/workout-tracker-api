@@ -191,10 +191,70 @@ const deleteWorkoutExercise = (req, res) => {
   }
 };
 
+// GET /workout-exercises - Listar todos los WorkoutExercises con filtros
+const getAllWorkoutExercises = (req, res) => {
+  try {
+    const { workoutPlanId, exerciseId, exerciseName, minSets, maxWeight } = req.query;
+    
+    let filteredWorkoutExercises = [...workoutExercises];
+
+    // Filtro por workoutPlanId
+    if (workoutPlanId) {
+      filteredWorkoutExercises = filteredWorkoutExercises.filter(w => 
+        w.workoutPlanId === parseInt(workoutPlanId)
+      );
+    }
+
+    // Filtro por exerciseId
+    if (exerciseId) {
+      filteredWorkoutExercises = filteredWorkoutExercises.filter(w => 
+        w.exerciseId === parseInt(exerciseId)
+      );
+    }
+
+    // Búsqueda por nombre de ejercicio
+    if (exerciseName) {
+      filteredWorkoutExercises = filteredWorkoutExercises.filter(w => 
+        w.exercise_name.toLowerCase().includes(exerciseName.toLowerCase())
+      );
+    }
+
+    // Filtro por sets mínimos
+    if (minSets) {
+      filteredWorkoutExercises = filteredWorkoutExercises.filter(w => 
+        w.sets >= parseInt(minSets)
+      );
+    }
+
+    // Filtro por peso máximo
+    if (maxWeight) {
+      filteredWorkoutExercises = filteredWorkoutExercises.filter(w => 
+        w.weight <= parseInt(maxWeight)
+      );
+    }
+
+    // Ordenar por orden
+    filteredWorkoutExercises.sort((a, b) => a.order - b.order);
+
+    res.json({
+      success: true,
+      data: filteredWorkoutExercises,
+      count: filteredWorkoutExercises.length,
+      filters: { workoutPlanId, exerciseId, exerciseName, minSets, maxWeight }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener WorkoutExercises'
+    });
+  }
+};
+
 // Actualizar exports
 module.exports = {
   getWorkoutExerciseById,
   createWorkoutExercise,
   updateWorkoutExercise,
   deleteWorkoutExercise,
+  getAllWorkoutExercises
 };
