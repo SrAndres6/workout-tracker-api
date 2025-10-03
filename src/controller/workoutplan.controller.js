@@ -136,9 +136,38 @@ const updateWorkoutPlan = (req, res) => {
   }
 };
 
+// DELETE /workout-plans/:id - Eliminar WorkoutPlan
+const deleteWorkoutPlan = (req, res) => {
+  try {
+    const { id } = req.params;
+    const workoutPlanIndex = workoutPlans.findIndex(w => w.id === parseInt(id));
+    
+    if (workoutPlanIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'WorkoutPlan no encontrado'
+      });
+    }
+
+    const deletedWorkoutPlan = workoutPlans.splice(workoutPlanIndex, 1)[0];
+
+    res.json({
+      success: true,
+      data: deletedWorkoutPlan,
+      message: 'WorkoutPlan eliminado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar WorkoutPlan'
+    });
+  }
+};
+
 module.exports = {
   getAllWorkoutPlans,
   createWorkoutPlan,
   updateWorkoutPlan,
+  deleteWorkoutPlan,
 
 };
