@@ -149,51 +149,73 @@ const createExercise = (req, res) => {
     }
 };
 
-// PUT /exercises/:id - Actualizar ejercicio completo
-const putExercise = (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, description, category, muscleGroup, difficulty, equipment } = req.body;
-
-        const exerciseIndex = exercises.findIndex(ex => ex.id === parseInt(id));
-
-        if (exerciseIndex === -1) {
-            return res.status(404).json({
-                success: false,
-                message: 'Ejercicio no encontrado'
-            });
-        }
-
-        // PUT: requiere todos los campos obligatorios
-        if (!name || !category) {
-            return res.status(400).json({
-                success: false,
-                message: 'Nombre y categoría son obligatorios'
-            });
-        }
-
-        exercises[exerciseIndex] = {
-            ...exercises[exerciseIndex],
-            name,
-            description: description || '',
-            category,
-            muscleGroup: muscleGroup || '',
-            difficulty: difficulty || 'Principiante',
-            equipment: equipment || '',
-            updatedAt: new Date()
-        };
-
-        res.json({
-            success: true,
-            data: exercises[exerciseIndex],
-            message: 'Ejercicio actualizado exitosamente'
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error al actualizar ejercicio'
-        });
+// PUT /exercises/:id - Actualizar ejercicio COMPLETO
+const actualizarExercise = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, category, muscleGroup, difficulty, equipment } = req.body;
+    
+    // Buscar el ejercicio
+    const exerciseIndex = exercises.findIndex(ex => ex.id === parseInt(id));
+    
+    // Si no existe, error 404
+    if (exerciseIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ejercicio no encontrado'
+      });
     }
+
+    // Validaciones - PUT requiere TODOS los campos obligatorios
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'El nombre es obligatorio'
+      });
+    }
+
+    if (!category || !category.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'La categoría es obligatoria'
+      });
+    }
+
+    // Validar dificultad
+    const allowedDifficulties = ['Principiante', 'Intermedio', 'Avanzado'];
+    if (!difficulty || !allowedDifficulties.includes(difficulty)) {
+      return res.status(400).json({
+        success: false,
+        message: `Dificultad es obligatoria y debe ser: ${allowedDifficulties.join(', ')}`
+      });
+    }
+
+    // Actualizar TODOS los campos (reemplazo completo)
+    exercises[exerciseIndex] = {
+      id: parseInt(id), // Mantener el mismo ID
+      name: name.trim(),
+      description: description ? description.trim() : '',
+      category: category.trim(),
+      muscleGroup: muscleGroup ? muscleGroup.trim() : '',
+      difficulty: difficulty,
+      equipment: equipment ? equipment.trim() : '',
+      createdAt: exercises[exerciseIndex].createdAt, // Mantener fecha creación
+      updatedAt: new Date() // Actualizar fecha modificación
+    };
+
+    // Respuesta exitosa
+    res.json({
+      success: true,
+      data: exercises[exerciseIndex],
+      message: 'Ejercicio actualizado exitosamente'
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar ejercicio'
+    });
+  }
 };
 
 // DELETE /exercises/:id - Eliminar ejercicio
@@ -277,7 +299,7 @@ const getAllExercises = (req, res) => {
 module.exports = {
     getExerciseById,
     createExercise,
-    putExercise,
+    actualizarExercise,
     deleteExercise,
     getAllExercises
 };
