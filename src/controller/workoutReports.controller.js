@@ -79,8 +79,67 @@ const getWorkoutReportById = (req, res) => {
   }
 };
 
+// POST /workout-reports - Crear nuevo WorkoutReport
+const createWorkoutReport = (req, res) => {
+  try {
+    const { 
+      workoutScheduleId, 
+      userId, 
+      workoutPlanId, 
+      completedDate, 
+      totalDuration, 
+      totalExercises, 
+      totalSets, 
+      averageWeight, 
+      performanceRating, 
+      notes, 
+      exercisesCompleted 
+    } = req.body;
+    
+    if (!workoutScheduleId || !userId || !workoutPlanId || !completedDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'workoutScheduleId, userId, workoutPlanId y completedDate son obligatorios'
+      });
+    }
+
+    const newWorkoutReport = {
+      id: nextId,
+      workoutScheduleId,
+      userId,
+      workoutPlanId,
+      completedDate,
+      totalDuration: totalDuration || 0,
+      totalExercises: totalExercises || 0,
+      totalSets: totalSets || 0,
+      averageWeight: averageWeight || 0,
+      performanceRating: performanceRating || 0,
+      notes: notes || '',
+      exercisesCompleted: exercisesCompleted || [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    workoutReports.push(newWorkoutReport);
+    nextId++;
+
+    res.status(201).json({
+      success: true,
+      data: newWorkoutReport,
+      message: 'WorkoutReport creado exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear WorkoutReport'
+    });
+  }
+};
+
+
 // Actualizar exports
 module.exports = {
   getWorkoutReportById,
+  createWorkoutReport,
   
 };
