@@ -165,7 +165,7 @@ const deleteWorkoutPlan = (req, res) => {
 };
 
 // GET /workout-plans - Listar todos los WorkoutPlans con filtros
-const getAllworkoutPlan = (req, res) => {
+const getWorkoutPlanById = (req, res) => {
   try {
     const { userId, name, exercise } = req.query;
     
@@ -213,6 +213,6 @@ module.exports = {
   createWorkoutPlan,
   updateWorkoutPlan,
   deleteWorkoutPlan,
-  getAllworkoutPlan
+  getWorkoutPlanById
 
 };
